@@ -4,14 +4,11 @@ PATH = os.path.dirname(sys.argv[0])
 sys.path.append("/home/meow/mytest/isv_data_gathering/")
 #"home/meow/dev/isv_data_gathering/"
 #FIX THIS WEIRD PATH STUFF
-import conllu
 from conllu.parser import parse_dict_value
 from io import open
 
 
 import string
-import json
-import jellyfish
 from isv_data_utils import constants
 from isv_data_utils import translation_aux
 from isv_data_utils import isv_translate as it

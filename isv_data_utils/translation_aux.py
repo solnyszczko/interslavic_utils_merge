@@ -1,4 +1,4 @@
-from collections import defaultdict
+from isv_data_utils.constants import transliteration
 
 LANGS = {
        'en',
@@ -111,31 +111,17 @@ def infer_pos(details_string):
     if 'v' in arr:
         return 'verb'
 
-ryba = lambda x: x
-
-transliteration = defaultdict(lambda: ryba)
-transliteration['ru'] = lambda x: x.replace("ё", "е")
-transliteration['uk'] = lambda x: x.replace('ґ', 'г')
-transliteration['be'] = lambda x: x.replace('ґ', 'г')
-
-
-def prepare_slovnik(slovnik):
-    for lang in LANGS:
-         assert slovnik[slovnik[lang].astype(str).apply(lambda x: "((" in sorted(x))].empty
-    import re
-    brackets_regex = re.compile(" \(.*\)")
-    for lang in LANGS:
-        slovnik[lang] = slovnik[lang].str.replace(brackets_regex, "").astype(str)
-        slovnik[lang] = slovnik[lang].apply(transliteration[lang])
-        slovnik[lang + "_set"] = slovnik[lang].str.split(", ").apply(lambda x: set(x))
-    slovnik['isv'] = slovnik['isv'].str.replace("!", "").str.replace("#", "").str.lower()
-    slovnik['type'] = slovnik['type'].astype(str)
+    
 
 
 def iskati2(jezyk, slovo, sheet, pos=None):
     if pos is not None:
         pos = UDPos2OpenCorpora(pos.lower())
     najdene_slova = []
+    # could be done on loading
+    sheet['isv'] = sheet['isv'].str.replace("!", "").str.replace("#", "").str.lower()
+    #sheet[jezyk] = sheet[jezyk].apply(transliteration[jezyk])
+    #
     slovo = transliteration[jezyk](slovo)
 
     candidates = sheet[sheet[jezyk + "_set"].apply(lambda x: slovo in x)]

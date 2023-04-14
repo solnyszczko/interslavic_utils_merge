@@ -1,5 +1,16 @@
 import pymorphy2
 import re
+import os,sys
+from collections import defaultdict
+PATH = os.path.dirname(sys.argv[0])
+
+
+ryba = lambda x: x
+transliteration = defaultdict(lambda: ryba)
+transliteration['ru'] = lambda x: x.replace("ё", "е")
+transliteration['uk'] = lambda x: x.replace('ґ', 'г')
+transliteration['be'] = lambda x: x.replace('ґ', 'г')
+
 
 VERB_PREFIXES = [
     'do', 'iz', 'izpo', 'nad', 'na', 'ne', 'ob', 'odpo', 'od', 'o', 'prědpo',
@@ -87,7 +98,7 @@ def iterate_over_text(paragraph, extended=False):
                 yield token
 
 
-def create_analyzers_for_every_alphabet(path="C:\\dev\\pymorphy2-dicts\\"):
+def create_analyzers_for_every_alphabet(path=PATH):
 
     std_morph = pymorphy2.MorphAnalyzer(
         path+"out_isv_lat",
@@ -110,7 +121,7 @@ def create_analyzers_for_every_alphabet(path="C:\\dev\\pymorphy2-dicts\\"):
     return abecedas
 
 
-def create_etm_analyzer(path="C:\\dev\\pymorphy2-dicts\\"):
+def create_etm_analyzer(path=PATH):
     return pymorphy2.MorphAnalyzer(
         path+"out_isv_etm",
         units=DEFAULT_UNITS,

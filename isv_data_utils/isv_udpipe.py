@@ -2,12 +2,11 @@
 # DO NOT TOUCH
 
 from pandas import read_excel
-from isv_nlp_utils import constants
+from isv_data_utils import constants
+from isv_data_utils.translation_aux import UDFeats2OpenCorpora, infer_pos, iskati2, transliteration
 
 
-transliteration = {
-    "ru": lambda x: x.replace("ё", "е")
-}
+
 
 dfs = read_excel(
     io='https://docs.google.com/spreadsheets/d/e/2PACX-1vRsEDDBEt3VXESqAgoQLUYHvsA5yMyujzGViXiamY7-yYrcORhrkEl5g6JZPorvJrgMk6sjUlFNT4Km/pub?output=xlsx',
@@ -19,115 +18,21 @@ dfs['words']['id'] = dfs['words']['id'].fillna(0.0).astype(int)
 
 print(dfs['words'].head(2).T)
 
-def UDFeats2OpenCorpora(feats):
-    result = []
-    for key, value in feats.items():
-        if key == "Animacy":
-            # fukken TODO
-            pass
-        if key == 'Case':
-            CASES_MAP = {
-                "Nom": 'nomn',
-                "Gen": 'gent',
-                "Dat": 'datv',
-                "Acc": 'accs',
-                "Ins": 'ablt',
-                "Loc": 'loct',
-                "Voc": 'voct',
-            }
-            result.append(CASES_MAP[value])
-        if key == 'Gender':
-            if value.lower() == "fem": 
-                value = "femn"
-            result.append(value.lower())
-        if key == 'Number':
-            result.append(value.lower())
-        if key == 'Tense':
-            result.append(value.lower())
-        if key == 'Person':
-            result.append(value.lower() + 'per')
-        # {'Aspect': 'Imp', 'Mood': 'Ind', 'Tense': 'Past', 'VerbForm': 'Fin', 'Voice': 'Act'}
-    return set(result)
-
-
-def infer_pos(details_string):
-    arr = [
-        x for x in details_string
-        .replace("./", '/')
-        .replace(" ", '')
-        .split('.')
-        if x != ''
-    ]
-
-    if 'adj' in arr:
-        return 'adj'
-    if set(arr) & {'f', 'n', 'm', 'm/f'}:
-        return 'noun'
-    if 'adv' in arr:
-        return 'adv'
-    if 'conj' in arr:
-        return 'conj'
-    if 'prep' in arr:
-        return 'prep'
-    if 'pron' in arr:
-        return 'pron'
-    if 'num' in arr:
-        return 'num'
-    if 'intj' in arr:
-        return 'interjection'
-    if 'v' in arr:
-        return 'verb'
 
 
 dfs['words']['pos'] = dfs['words'].partOfSpeech.apply(infer_pos)
 
-def iskati(jezyk, slovo, sheet):
-    najdene_slova = []
-    for i in range(1, len(sheet['isv'])):
-        cell = str( sheet[jezyk][i] )
-        cell = str.replace( cell, '!', '')
-        cell = str.replace( cell, '#', '')
-        cell = cell.lower()
-        cell = transliteration[jezyk](cell)
-        if slovo in str.split( cell, ', ' ):
-            najdene_slova.append(i)
-    return najdene_slova
-
-def iskati2(jezyk, slovo, sheet, pos=None):
-    if pos is not None:
-        pos = pos.lower()
-    najdene_slova = []
-    # could be done on loading
-    sheet['isv'] = sheet['isv'].str.replace("!", "").str.replace("#", "").str.lower()
-    sheet[jezyk] = sheet[jezyk].apply(transliteration[jezyk])
-
-    # lang-specific logic
-
-    for i, stroka in sheet.iterrows():
-        cell = stroka[jezyk]
-
-        if slovo in stroka[jezyk].split(", "):
-            if pos is not None:
-                if pos == stroka["pos"]:
-                    najdene_slova.append(i)
-                else:
-                    print("~~~~", stroka['isv'], pos, ' != ', stroka['pos'])
-            else:
-                najdene_slova.append(i)
-    # najdene_slova = reversed(sorted(najdene_slova, key=lambda x: x['type']))
-    # return [x['isv'] for x in najdene_slova]
-    return najdene_slova
 
 
-found = iskati2("ru", 'знать', dfs['words'], 'noun')
+found = iskati2("ru", 'знать', dfs['words'], 'noun')[0]
 print(found)
 print(dfs['words'].loc[found, ['isv', 'ru']])
 
-found = iskati2("ru", 'знать', dfs['words'], 'verb')
+found = iskati2("ru", 'знать', dfs['words'], 'verb')[0]
 print(found)
 print(dfs['words'].loc[found, ['isv', 'ru']])
 
-found = iskati2("ru", 'на', dfs['words'])
+found = iskati2("ru", 'на', dfs['words'])[0]
 print(found)
 print(dfs['words'].loc[found, ['isv', 'ru', 'type', 'partOfSpeech']])
 '''
@@ -175,7 +80,7 @@ for sent in parsed[1:]:
             result.append(token['form'])
             continue
         lemma = token['lemma']
-        found = iskati2("ru", lemma, dfs['words'])
+        found = iskati2("ru", lemma, dfs['words'])[0]
         rows_found = dfs['words'].loc[found, :].sort_values(by='type')
         if not found:
             print("####????", token, lemma, token['upos'])
@@ -194,7 +99,7 @@ for sent in parsed[1:]:
             isv_lemma = understandable_best_translation
             print(isv_lemma)
             print(token['feats'])
-            inflect_data = UDFeats2OpenCorpora(token['feats'])
+            inflect_data = UDFeats2OpenCorpora(token['feats'],"")
             print(inflect_data)
             inflected = inflect_carefully(morph, isv_lemma, inflect_data)
             if not inflected:
