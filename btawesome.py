@@ -18,7 +18,7 @@ from isv_data_utils import isv_translate as it
 punctuation_chars = list(string.punctuation)
 punctuation_chars.extend(['‘', '’', '“', '”', '…', '–', '—', '„'])
 
-morph = constants.create_etm_analyzer(PATH)
+morph = constants.create_analyzers_for_every_alphabet(PATH)['etm']
 
 #postprocess_translation_detailss
 
@@ -41,3 +41,5 @@ print(parsed)
 udpipe_details = it.translate_sentence(parsed, lang, slovnik, etm_morph)
 
 print(udpipe_details.translation_candidates.values.tolist())
+
+print("".join(x['str'] for x in it.postprocess_translation_details(udpipe_details)))

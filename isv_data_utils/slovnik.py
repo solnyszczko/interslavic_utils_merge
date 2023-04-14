@@ -16,7 +16,7 @@ LANGS = {
 
 
 
-def download_slovnik(save=True):
+def download_slovnik():
     dfs = pd.read_excel(
         io='https://docs.google.com/spreadsheets/d/e/2PACX-1vRsEDDBEt3VXESqAgoQLUYHvsA5yMyujzGViXiamY7-yYrcORhrkEl5g6JZPorvJrgMk6sjUlFNT4Km/pub?output=xlsx',
         engine='openpyxl',
@@ -24,8 +24,7 @@ def download_slovnik(save=True):
     )
     dfs['words']['id'] = dfs['words']['id'].fillna(0.0).astype(int)
     dfs['words']['pos'] = dfs['words'].partOfSpeech.astype(str).apply(infer_pos)
-    if save:
-        dfs['words'].to_pickle("slovnik.pkl")
+
     return dfs
 
 def get_slovnik(save=True):
