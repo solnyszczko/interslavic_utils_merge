@@ -23,9 +23,6 @@ def morphological_flavorise(tokens_data, morph, flavor_rules, debug_indices=set(
 
 def flavorise(word, golden_pos_tag, isv_morph, flavor):
     word = word.replace("đ", "dʒ")
-    return __flavorise(word, golden_pos_tag, isv_morph, flavor).replace("dʒ", "đ")
-
-def __flavorise(word, golden_pos_tag, isv_morph, flavor):
     if golden_pos_tag == "PNCT":
         return word
     if golden_pos_tag == "ADVB":
@@ -83,7 +80,7 @@ def __flavorise(word, golden_pos_tag, isv_morph, flavor):
                     if word[-len(base):] == base:
                         return word[:-len(base)] + replacement
 
-    return word
+    return word.replace("dʒ", "đ")
 
 
 
