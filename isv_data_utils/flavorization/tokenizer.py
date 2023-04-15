@@ -6,6 +6,11 @@ from string import punctuation
 
 from natasha.record import Record
 
+from itertools import product
+
+#from isv_data_utils.flavorization.tokenizer import all_token_text_variants
+
+
 #class AnnotatedToken(Record):
 #    __attributes__ = ['text', 'capitalization', 'space_after', 'features', 'POS', 'slovnik_pos', 'lemma', 'isv_id', 'genesis', 'is_processed']
 
@@ -168,10 +173,6 @@ def tokens_to_string_randomly(tokens):
     ]
     return "".join(final)
 
-
-from itertools import product
-
-from isv_nlp_utils.flavorization.tokenizer import all_token_text_variants
 
 def tokens_to_exhaustive_string_list(tokens):
     all_texts_for_each_token = [all_token_text_variants(token) for token in tokens]

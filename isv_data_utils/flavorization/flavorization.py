@@ -1,16 +1,21 @@
-from .parsing import parse_multireplacer_rules
-from .tokenizer import compute_annotated_tokens
-from .replacer import process_multireplacing, morphological_flavorise
+from parsing import parse_multireplacer_rules
+from tokenizer import compute_annotated_tokens
+from replacer import process_multireplacing, morphological_flavorise
 # from .selector import select_randomly, select_lingua
 
-from isv_nlp_utils import constants
-from isv_nlp_utils.slovnik import get_slovnik
+from isv_data_utils.constants import create_etm_analyzer, PATH
+from isv_data_utils.slovnik import get_slovnik
 # from isv_translate import translate_sentence, postprocess_translation_details, prepare_parsing
 
 from ast import literal_eval
 import os
 import glob
-
+#PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+print(PATH)
+#PATH = os.path.abspath(os.path.join(PATH, '..'))
+#print(PATH)
+#PATH += "/"
+# print(PATH)
 
 if __name__ == "__main__":
     Src = (
@@ -20,20 +25,23 @@ if __name__ == "__main__":
 
     slovnik = get_slovnik()
     slovnik = slovnik['words']
+    
 
-    morph = constants.create_etm_analyzer(r"C:\dev\ISV_data_gathering\\")
+    morph = create_etm_analyzer(PATH)
+    print("MEOW")
+    print(r"razumlivost/src/flavorizers/*.ts")
 
-    for LANG in [os.path.basename(l).partition(".")[0] for l in glob.glob(r"C:\dev\razumlivost\src\flavorizers\*.ts")]:
+    for LANG in [os.path.basename(l).partition(".")[0] for l in glob.glob(PATH+"razumlivost/src/flavorizers/quick/*.ts")]:
 
         if LANG == "index":
             continue
         print(LANG)
         rules_struct = parse_multireplacer_rules(
-            r"C:\dev\razumlivost\src\flavorizers\{}.ts".format(LANG)
+            PATH+"razumlivost/src/flavorizers/quick/{}.ts".format(LANG)
         )
 
         try:
-            with open(r"C:\dev\razumlivost\src\flavorizers\morpho_{}.txt".format(LANG), "r", encoding="utf8") as f:
+            with open(PATH+"razumlivost/src/flavorizers/morpho_{}.txt".format(LANG), "r", encoding="utf8") as f:
                 flavor_rules = literal_eval(f.read())
             # TODO: store `ju` in file
             ju = True

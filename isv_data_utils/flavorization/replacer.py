@@ -1,19 +1,23 @@
 import regex
 from copy import deepcopy
+import sys
+import os
 
-from ..constants import inflect_carefully
-from .tokenizer import all_token_text_variants
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from isv_data_utils.constants import inflect_carefully
+from tokenizer import all_token_text_variants
 
 def morphological_flavorise(tokens_data, morph, flavor_rules, debug_indices=set()):
     tokens_data = deepcopy(tokens_data)
     for i, token in enumerate(tokens_data):
-        original = token.text[0]
-        word = token.text[0].lower()
+        print(token.variants[0].text_variants)
+        original = token.variants[0].text_variants[0]
+        word = token.variants[0].text_variants[0].lower()
         if word in flavor_rules["SPECIAL_CASES"]:
             flavorised = flavor_rules["SPECIAL_CASES"][word]
             token.was_force_processed = True
         else:
-            flavorised = flavorise(token.text[0].lower(), token.POS, morph, flavor_rules)
+            flavorised = flavorise(token.variants[0].text_variants[0].lower(), token.variants[0].slovnik_pos, morph, flavor_rules)
         token.text[0] = flavorised
         if original != flavorised and i in debug_indices:
             print(original, flavorised)

@@ -2,7 +2,8 @@ import pymorphy2
 import re
 import os,sys
 from collections import defaultdict
-PATH = os.path.dirname(sys.argv[0])
+PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) +'/'
+print(PATH)
 
 
 ryba = lambda x: x
@@ -129,6 +130,8 @@ def create_etm_analyzer(path=PATH):
     )
 
 
+
+
 def inflect_carefully(morph, parsing, inflect_data, verbose=0):
     if verbose > 1:
         print(parsing, inflect_data)
@@ -163,4 +166,4 @@ def inflect_carefully(morph, parsing, inflect_data, verbose=0):
     result = [x.word for x in result]
     if is_negative:
         result = ["ne " + x for x in result]
-    return result
+    return 

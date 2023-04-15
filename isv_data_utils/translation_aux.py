@@ -137,17 +137,20 @@ def iskati2(jezyk, slovo, sheet, pos=None):
         return candidates.index.tolist(), 'maybe'
 
 
-def inflect_carefully(morph, isv_lemma, inflect_data, verbose=False):
+def inflect_carefully(morph, isv_lemma, inflect_data, pos=[] ,verbose=False):
     if verbose:
         print(isv_lemma, inflect_data)
-    parsed = morph.parse(isv_lemma)
-    if not parsed:
+    parses = morph.parse(isv_lemma)#parsed gets set twice?
+    parsed = None
+    if not parses:
         # some sort of error happened
         if verbose:
             print("ERROR:", isv_lemma, inflect_data)
         return []
-
-    parsed = morph.parse(isv_lemma)[0]
+    if pos!=[]: #added optional POS option, for me helped fix conjugation of the word "brati"
+        for parse in parses:
+            if parse[1].POS.lower() in pos: parsed = parse
+    if parsed == None: parsed = morph.parse(isv_lemma)[0]
     lexeme = parsed.lexeme
     is_negative = False
 
@@ -179,6 +182,5 @@ def inflect_carefully(morph, isv_lemma, inflect_data, verbose=False):
     result = [x.word for x in result]
     if is_negative:
         result = ["ne " + x for x in result]
-    return result
-
+    return 
 
