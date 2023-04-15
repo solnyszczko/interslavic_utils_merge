@@ -1,0 +1,46 @@
+{
+    "VERB":
+    {
+        "infn": (-1, 'ь'),
+        "3per+sing": (None, 't'),
+    },
+    "NOUN":
+    {
+        "loct+sing+masc": (-1, "ě"),
+    },
+    "ADJF":
+    {
+        "nomn+sing+femn": (None, "ja"),
+        # problematic without morphological disambiguation
+        # "nomn+sing+neut": (None, "je"),
+        "nomn+sing+masc": (None, "j"),
+
+        "accs+sing+femn": {'ų': "uju"},
+        "accs+sing+neut": (None, "je"),
+        "accs+sing+masc+anim": (None, ""),
+        "accs+sing+masc+inan": (None, "j"),
+
+        # "accs+plur": (None, "iě"),
+        "nomn+plur": (-1, "ые"),
+        "accs+plur+neut": (-1, "ые"),
+        # "accs+plur+femn+anim": (-1, "ых"),
+        # "accs+plur+femn+inan": (-1, "ые"),
+        # "accs+plur+masc+anim": (-1, "ых"),
+        # "accs+plur+masc+inan": (-1, "ые"),
+    },
+    "INFLECTIONS": {
+        "verb-ju": True,
+        "short-pronouns": False,
+    },
+    "SPECIAL_CASES": {
+        "byh": "я бы",
+        "jesm": "являюсь",
+        "jesmo": "являемся",
+        "jesi": "являешься",
+        "jest": "является",
+        "je": "есть",
+        "jeste": "являетесь",
+        "sųt": "являются",
+        "jestli": "если"
+    }
+}
